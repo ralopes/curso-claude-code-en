@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Final Assessment — Claude Code Corporate Course</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--roxo:#5B4CF5;--roxo-luz:#EEF0FF;--verde:#27AE60;--verde-bg:#EDFAF1;--vermelho:#E74C3C;--vermelho-bg:#FEF2F2;--amarelo:#F39C12;--amarelo-bg:#FFF8E7;--texto:#1A1A2E;--texto-suave:#5A5A7A;--borda:#E2E4F0;--raio:10px}
+body{font-family:'Inter',system-ui,sans-serif;background:#F4F4FB;color:var(--texto);font-size:15px;line-height:1.7;min-height:100vh}
+#setup-banner{background:var(--amarelo-bg);border-bottom:2px solid var(--amarelo);padding:14px 24px;display:flex;align-items:center;gap:12px;font-size:.88rem}
+#setup-banner strong{color:#7D5A00}
+.header{background:linear-gradient(135deg,#0F0F24 0%,#1A1A3E 100%);color:#fff;padding:40px 24px 32px;text-align:center}
+.header-logo{font-size:2.8rem;margin-bottom:12px}
+.header h1{font-size:1.6rem;font-weight:700;margin-bottom:6px}
+.header p{color:#9090C0;font-size:.9rem}
+.header-chips{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.chip{background:rgba(91,76,245,.3);border:1px solid rgba(91,76,245,.5);border-radius:20px;padding:5px 14px;font-size:.78rem;color:#C0C0FF}
+.chip.pass{background:rgba(39,174,96,.25);border-color:rgba(39,174,96,.5);color:#90EEB0}
+.container{max-width:780px;margin:0 auto;padding:32px 24px 64px}
+.card{background:#fff;border:1px solid var(--borda);border-radius:var(--raio);padding:28px;margin-bottom:16px;box-shadow:0 2px 8px rgba(91,76,245,.05)}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:520px){.info-grid{grid-template-columns:1fr}}
+.field label{display:block;font-size:.8rem;font-weight:600;color:var(--texto-suave);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.field input{width:100%;border:2px solid var(--borda);border-radius:8px;padding:10px 14px;font-size:.95rem;font-family:inherit;color:var(--texto);transition:border-color .15s;outline:none}
+.field input:focus{border-color:var(--roxo)}
+.question-card{background:#fff;border:1px solid var(--borda);border-radius:var(--raio);padding:22px 24px;margin-bottom:12px;transition:border-color .2s}
+.question-card.answered{border-color:var(--roxo)}
+.question-card.correct{border-color:var(--verde);background:var(--verde-bg)}
+.question-card.wrong{border-color:var(--vermelho);background:var(--vermelho-bg)}
+.question-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.question-num{background:var(--roxo-luz);color:var(--roxo);width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;flex-shrink:0;margin-top:1px}
+.question-card.correct .question-num{background:var(--verde-bg);color:var(--verde)}
+.question-card.wrong .question-num{background:var(--vermelho-bg);color:var(--vermelho)}
+.question-text{font-weight:500;font-size:.97rem;flex:1;line-height:1.5}
+.module-tag{font-size:.68rem;background:var(--roxo-luz);color:var(--roxo);border-radius:10px;padding:2px 8px;font-weight:600;flex-shrink:0;margin-top:3px}
+.options{display:flex;flex-direction:column;gap:8px}
+.option{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border:2px solid var(--borda);border-radius:8px;cursor:pointer;transition:all .15s;font-size:.9rem;line-height:1.45}
+.option:hover{border-color:var(--roxo);background:var(--roxo-luz)}
+.option input[type="radio"]{margin-top:2px;flex-shrink:0;accent-color:var(--roxo)}
+.option.correct-answer{border-color:var(--verde)!important;background:var(--verde-bg)!important}
+.option.wrong-answer{border-color:var(--vermelho)!important;background:var(--vermelho-bg)!important}
+.progress-wrap{margin-bottom:24px}
+.progress-label{display:flex;justify-content:space-between;font-size:.82rem;color:var(--texto-suave);margin-bottom:6px}
+.progress-track{background:var(--borda);border-radius:4px;height:6px;overflow:hidden}
+.progress-fill{background:linear-gradient(90deg,var(--roxo),#00C2A8);height:100%;border-radius:4px;transition:width .3s;width:0%}
+.btn-submit{width:100%;padding:16px;background:var(--roxo);color:#fff;border:none;border-radius:var(--raio);font-size:1rem;font-weight:600;font-family:inherit;cursor:pointer;transition:all .15s;margin-top:8px}
+.btn-submit:hover{background:#4A3BE0;transform:translateY(-1px);box-shadow:0 4px 16px rgba(91,76,245,.35)}
+.btn-submit:disabled{background:#9090B0;cursor:not-allowed;transform:none;box-shadow:none}
+#results{display:none}
+.result-hero{text-align:center;padding:40px 24px;border-radius:var(--raio);margin-bottom:24px}
+.result-hero.aprovado{background:linear-gradient(135deg,#0F4C2A 0%,#1A6B3E 100%);color:#fff}
+.result-hero.reprovado{background:linear-gradient(135deg,#4A0F0F 0%,#6B1A1A 100%);color:#fff}
+.result-icon{font-size:4rem;margin-bottom:16px}
+.result-status{font-size:1.8rem;font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
+.result-score{font-size:3.5rem;font-weight:800;letter-spacing:-.03em;margin:12px 0}
+.result-pct{font-size:1rem;opacity:.8}
+.result-msg{font-size:.9rem;opacity:.9;margin-top:12px;max-width:440px;margin-left:auto;margin-right:auto}
+.result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.stat-box{background:#fff;border:1px solid var(--borda);border-radius:var(--raio);padding:18px;text-align:center}
+.stat-value{font-size:1.8rem;font-weight:700;color:var(--roxo)}
+.stat-label{font-size:.75rem;color:var(--texto-suave);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+.email-status{background:var(--roxo-luz);border:1px solid var(--borda);border-radius:var(--raio);padding:16px 20px;font-size:.88rem;color:var(--texto-suave);margin-bottom:24px}
+.back-link{display:inline-flex;align-items:center;gap:8px;color:var(--roxo);text-decoration:none;font-size:.88rem;font-weight:500;margin-bottom:24px}
+.back-link:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<script>
+var EMAILJS_PUBLIC_KEY='SEU_PUBLIC_KEY_AQUI';
+var EMAILJS_SERVICE_ID='SEU_SERVICE_ID_AQUI';
+var EMAILJS_TEMPLATE_ID='SEU_TEMPLATE_ID_AQUI';
+var ADMIN_EMAIL='raul.lopes@infobip.com';
+var EMAIL_CONFIGURED=(EMAILJS_PUBLIC_KEY!=='SEU_PUBLIC_KEY_AQUI');
+</script>
+<div id="setup-banner"><span>⚠️</span><span><strong>Email configuration pending:</strong> Follow the <strong>EMAILJS-SETUP.md</strong> file to enable automatic result delivery.</span></div>
+<div class="header">
+  <div class="header-logo">🤖</div>
+  <h1>Final Assessment</h1>
+  <p>Claude Code Corporate Course &mdash; Dr. Marcus Reid</p>
+  <div class="header-chips">
+    <span class="chip">20 questions</span>
+    <span class="chip">Multiple choice</span>
+    <span class="chip pass">Pass: 80% &mdash; 16 of 20 correct</span>
+  </div>
+</div>
+<div class="container">
+  <a href="index.html" class="back-link">&#8592; Back to course</a>
+  <div id="test-form-wrap">
+    <div class="card">
+      <h2 style="font-size:1rem;margin-bottom:16px;color:var(--texto-suave);text-transform:uppercase;letter-spacing:.05em">Your details</h2>
+      <div class="info-grid">
+        <div class="field"><label>Full name</label><input type="text" id="student-name" placeholder="Your full name" required></div>
+        <div class="field"><label>Email</label><input type="email" id="student-email" placeholder="your@email.com" required></div>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Progress</span><span id="progress-text">0 of 20 answered</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+    <div id="questions-wrap"></div>
+    <button class="btn-submit" id="btn-submit" onclick="submitTest()">Submit Assessment</button>
+  </div>
+  <div id="results">
+    <a href="index.html" class="back-link">&#8592; Back to course</a>
+    <div id="result-hero-wrap"></div>
+    <div class="result-stats" id="result-stats"></div>
+    <div class="email-status" id="email-status"></div>
+    <div id="questions-review"></div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+var QUESTIONS=[
+  {id:1,module:'M1',text:'After installing the Claude Code extension in VS Code, what is the mandatory step to start using it?',options:['Create a CLAUDE.md file at the root of the project','Install Node.js on the computer','Authenticate with a Claude or Anthropic account','Manually configure the VS Code settings.json file'],correct:2},
+  {id:2,module:'M1',text:'What happens to the conversation history when you close and open a new session in Claude Code?',options:['It is automatically saved in a .claude-history file','It remains available for 24 hours in the Anthropic cloud','It is lost — each new session starts without memory of the previous one','It is automatically exported to a Markdown file'],correct:2},
+  {id:3,module:'M2',text:'What are the 5 elements of a well-structured prompt according to Module 2?',options:['Objective, Method, Data, Output, Validation','Role, Task, Context, Format, Constraints','Title, Body, Examples, Result, Review','Persona, Action, Limit, Form, Verification'],correct:1},
+  {id:4,module:'M2',text:'Why is the prompt "improve this code" considered inefficient?',options:['It is too short to be processed correctly by the agent','It does not specify the programming language used','It does not define the improvement criterion nor provides sufficient context','It should end with a question mark'],correct:2},
+  {id:5,module:'M2',text:'What does "iterating" on a prompt mean in Claude Code?',options:['Repeating the same prompt multiple times until obtaining an identical result','Refining the request based on previous responses, adding context or corrections','Saving different versions of the prompt in a separate file','Splitting a long prompt into smaller independent prompts'],correct:1},
+  {id:6,module:'M3',text:'In Claude Code, what is the name of the root folder opened in VS Code that the agent can access during the session?',options:['Repository','Project','Workspace','Working directory'],correct:2},
+  {id:7,module:'M3',text:'What is the fastest way to reference a specific file directly in the Claude Code prompt?',options:['Type the full file path manually','Use the @ symbol followed by the file name','Drag the file to the chat window','Copy and paste the file content into the prompt'],correct:1},
+  {id:8,module:'M4',text:'What is the first step of the 4-step debugging framework taught in Module 4?',options:['Fix the suspicious code snippet directly','Describe the symptom precisely — what occurs versus what should occur','Rewrite the entire module from scratch','Search for the error message on Stack Overflow'],correct:1},
+  {id:9,module:'M4',text:'What are the 4 types of tests that Claude Code can generate for a piece of code?',options:['Speed, memory, security and compatibility tests','Unit, integration, edge case and regression tests','Manual, automated, visual and load tests','Input, processing, output and exception tests'],correct:1},
+  {id:10,module:'M4',text:'What is the recommended approach for refactoring code with Claude Code?',options:['Rewrite the entire module at once to avoid inconsistencies','Analyze the code, prioritize improvements and refactor incrementally, validating each step','Translate the code to a more modern language','Apply only formatting and naming fixes'],correct:1},
+  {id:11,module:'M5',text:'What is the CLAUDE.md file?',options:['A technical documentation file automatically generated by VS Code','An environment configuration file similar to .env','A file automatically loaded by Claude Code that provides persistent context to each session','A log file that records the conversation history'],correct:2},
+  {id:12,module:'M5',text:'What is the main advantage of maintaining a well-structured CLAUDE.md in the project?',options:['It increases the processing speed of the language model','It eliminates the need to repeat project conventions and context in each new conversation','It allows using Claude Code without an internet connection','It reduces the cost of using the Anthropic API'],correct:1},
+  {id:13,module:'M6',text:'What makes a specialized agent more effective than a generic agent?',options:['The specialized agent has access to more external tools and APIs','The specialized agent has a defined identity, scope and constraints that calibrate its responses','The generic agent makes more logical reasoning errors','There is no practical difference between specialized and generic agents'],correct:1},
+  {id:14,module:'M6',text:'In the context of specialized agents, what defines the "scope" of the agent?',options:['The maximum number of tokens the agent can use per session','The maximum expected response time','The boundaries of what the agent should and should not do','The language model that will be used'],correct:2},
+  {id:15,module:'M6',text:'What are the components that form the persona of a specialized agent according to Module 6?',options:['Name, version, language and output format','Professional identity, mission, quality criteria and communication tone','Only the role and restrictions','Initial prompt, temperature, token limit and language'],correct:1},
+  {id:16,module:'M7',text:'In which situation is the parallel orchestration pattern more appropriate than the sequential one?',options:['When there are many files to process in logical sequence','When each task depends on the result of the previous one to start','When the tasks are independent of each other and can be executed at the same time','When the project has a very tight deadline and there is no time for planning'],correct:2},
+  {id:17,module:'M7',text:'What is the purpose of the "handoff document" in a multi-agent pipeline?',options:['To formally document the project for delivery to the client','To accumulate and transfer the state, context and decisions of each agent to the next one in the pipeline','To record the errors and exceptions that occurred during execution','To automatically generate the final sprint report'],correct:1},
+  {id:18,module:'M7',text:'Why is it mandatory to pass the COMPLETE output (not a summary) of one agent to the next?',options:['To respect the minimum token limit required per request','To keep the conversation history visible to the end user','To avoid losing critical information that the next agent will need to execute its task','To facilitate human review of the entire pipeline'],correct:2},
+  {id:19,module:'M8',text:'What does the acronym MCP stand for in the context of Claude Code?',options:['Multi-Channel Processing','Managed Code Platform','Model Context Protocol','Multi-Claude Pipeline'],correct:2},
+  {id:20,module:'M8',text:'What is the main difference between using Claude Code with and without the Filesystem MCP active?',options:['With MCP, the agent processes responses faster','Without MCP, the agent cannot understand source code','With MCP, the agent reads and writes files directly; without MCP, it only works with text copied in the chat','With MCP, the agent has unrestricted access to the internet'],correct:2}
+];
+var userAnswers={};
+function renderQuestions(){var wrap=document.getElementById('questions-wrap');var html='';QUESTIONS.forEach(function(q){html+='<div class="question-card" id="qcard-'+q.id+'"><div class="question-header"><div class="question-num">'+q.id+'</div><div class="question-text">'+q.text+'</div><div class="module-tag">'+q.module+'</div></div><div class="options">';['A','B','C','D'].forEach(function(l,idx){html+='<label class="option"><input type="radio" name="q'+q.id+'" value="'+idx+'" onchange="selectAnswer('+q.id+','+idx+')"><strong style="flex-shrink:0;color:var(--texto-suave)">'+l+'.</strong>&nbsp;'+q.options[idx]+'</label>';});html+='</div></div>';});wrap.innerHTML=html;}
+function selectAnswer(qId,optIdx){userAnswers[qId]=optIdx;document.getElementById('qcard-'+qId).classList.add('answered');var a=Object.keys(userAnswers).length;document.getElementById('progress-text').textContent=a+' of 20 answered';document.getElementById('progress-fill').style.width=(a/20*100)+'%';}
+function submitTest(){var name=document.getElementById('student-name').value.trim();var email=document.getElementById('student-email').value.trim();if(!name){alert('Please enter your full name.');return;}if(!email||!email.includes('@')){alert('Please enter a valid email address.');return;}var answered=Object.keys(userAnswers).length;if(answered<20){if(!confirm('You still have '+(20-answered)+' unanswered question(s). Submit anyway?'))return;}var correct=0;var wrongList=[];QUESTIONS.forEach(function(q){var given=userAnswers[q.id];if(given===undefined){wrongList.push('Q'+q.id+' (Not answered). Correct: '+['A','B','C','D'][q.correct]+'. '+q.options[q.correct]);}else if(given===q.correct){correct++;}else{var L=['A','B','C','D'];wrongList.push('Q'+q.id+'. Your answer: '+L[given]+'. Correct: '+L[q.correct]+'. '+q.options[q.correct]);}});var pct=Math.round(correct/20*100);var approved=pct>=80;var btn=document.getElementById('btn-submit');btn.disabled=true;btn.textContent='Submitting...';showResults(name,email,correct,pct,approved,wrongList,new Date().toLocaleDateString('en-US'),false);}
+function showResults(name,email,correct,pct,approved){document.getElementById('test-form-wrap').style.display='none';document.getElementById('results').style.display='block';window.scrollTo(0,0);var heroClass=approved?'aprovado':'reprovado';document.getElementById('result-hero-wrap').innerHTML='<div class="result-hero '+heroClass+'"><div class="result-icon">'+(approved?'🎉':'😔')+'</div><div class="result-status">'+(approved?'PASSED':'FAILED')+'</div><div class="result-score">'+correct+'<span style="font-size:1.8rem;opacity:.7">/20</span></div><div class="result-pct">'+pct+'% score — minimum required: 80%</div><div class="result-msg">'+(approved?'Congratulations, '+name+'! You demonstrated mastery of the complete Claude Code arsenal.':'Don\'t give up, '+name+'. Review the modules for the incorrect questions and try again.')+'</div></div>';var wrong=20-correct;document.getElementById('result-stats').innerHTML='<div class="stat-box"><div class="stat-value" style="color:var(--verde)">'+correct+'</div><div class="stat-label">Correct</div></div><div class="stat-box"><div class="stat-value" style="color:var(--vermelho)">'+wrong+'</div><div class="stat-label">Incorrect</div></div><div class="stat-box"><div class="stat-value">'+pct+'%</div><div class="stat-label">Score</div></div>';document.getElementById('email-status').innerHTML='ℹ️ Email sending not configured. See EMAILJS-SETUP.md to enable it.';var reviewHtml='<h3 style="font-size:1rem;color:var(--texto-suave);text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px">Question Review</h3>';QUESTIONS.forEach(function(q){var given=userAnswers[q.id];var isCorrect=(given===q.correct);var cardClass=(given===undefined)?'wrong':(isCorrect?'correct':'wrong');var L=['A','B','C','D'];reviewHtml+='<div class="question-card '+cardClass+'"><div class="question-header"><div class="question-num">'+q.id+'</div><div class="question-text">'+q.text+'</div><div class="module-tag">'+q.module+'</div></div><div class="options">';q.options.forEach(function(opt,idx){var cls='';if(idx===q.correct)cls='correct-answer';else if(idx===given&&!isCorrect)cls='wrong-answer';reviewHtml+='<div class="option '+cls+'"><span style="font-weight:700;flex-shrink:0">'+(idx===q.correct?'✓':(idx===given&&!isCorrect?'✗':'○'))+'</span> <strong style="flex-shrink:0">'+L[idx]+'.</strong>&nbsp;'+opt+'</div>';});reviewHtml+='</div></div>';});document.getElementById('questions-review').innerHTML=reviewHtml;}
+document.addEventListener('DOMContentLoaded',function(){renderQuestions();if(EMAIL_CONFIGURED)document.getElementById('setup-banner').style.display='none';});
+</script>
+</body>
+</html>
